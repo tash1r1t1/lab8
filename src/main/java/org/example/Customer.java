@@ -30,51 +30,30 @@ public class Customer {
         if (!account.getCurrency().equals(currency)) {
             throw new RuntimeException("Can't extract withdraw " + currency);
         }
+
+        double overdraftFeeMultiplier = 1.0;
+
+        // Визначаємо множник для овердрафтної знижки
         if (account.getType().isPremium()) {
-            switch (customerType) {
-                case COMPANY:
-                    // we are in overdraft
-                    if (account.getMoney() < 0) {
-                        // 50 percent discount for overdraft for premium account
-                        account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee() * companyOverdraftDiscount / 2);
-                    } else {
-                        account.setMoney(account.getMoney() - sum);
-                    }
-                    break;
-                case PERSON:
-
-                    // we are in overdraft
-                    if (account.getMoney() < 0) {
-                        account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee());
-                    } else {
-                        account.setMoney(account.getMoney() - sum);
-                    }
-                    break;
+            if (customerType == CustomerType.COMPANY) {
+                overdraftFeeMultiplier =  companyOverdraftDiscount / 2; // Для компанії на преміум акаунті - знижка 50%
             }
-
+            // Для особи на преміум акаунті множник залишається 1.0
         } else {
-
-            switch (customerType) {
-                case COMPANY:
-                    // we are in overdraft
-                    if (account.getMoney() < 0) {
-                        // no discount for overdraft for not premium account
-                        account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee() * companyOverdraftDiscount);
-                    } else {
-                        account.setMoney(account.getMoney() - sum);
-                    }
-                    break;
-                case PERSON:
-                    // we are in overdraft
-                    if (account.getMoney() < 0) {
-                        account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee());
-                    } else {
-                        account.setMoney(account.getMoney() - sum);
-                    }
-                    break;
+            if (customerType == CustomerType.COMPANY) {
+                overdraftFeeMultiplier = companyOverdraftDiscount; // Для компанії без преміум акаунта знижка без змін
             }
+            // Для особи на звичайному акаунті множник теж 1.0
+        }
+
+        // Якщо акаунт у овердрафті, застосовуємо відповідний множник
+        if (account.getMoney() < 0) {
+            account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee() * overdraftFeeMultiplier);
+        } else {
+            account.setMoney(account.getMoney() - sum);
         }
     }
+
 
     public String getName() {
         return name;
