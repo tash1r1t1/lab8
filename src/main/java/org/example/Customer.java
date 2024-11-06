@@ -31,25 +31,30 @@ public class Customer {
             throw new RuntimeException("Can't extract withdraw " + currency);
         }
 
-        double overdraftFeeMultiplier = 1.0;
+        double overdraftFeeMultiplier = getOverdraftFeeMultiplier();
+        processWithdrawal(sum, overdraftFeeMultiplier);
+    }
 
-        // Визначаємо множник для овердрафтної знижки
+    private double getOverdraftFeeMultiplier() {
         if (account.getType().isPremium()) {
             if (customerType == CustomerType.COMPANY) {
-                overdraftFeeMultiplier =  companyOverdraftDiscount / 2; // Для компанії на преміум акаунті - знижка 50%
+                return companyOverdraftDiscount / 2; // Для компанії на преміум акаунті - знижка 50%
             }
-            // Для особи на преміум акаунті множник залишається 1.0
+            return 1.0; // Для особи на преміум акаунті множник залишається 1.0
         } else {
             if (customerType == CustomerType.COMPANY) {
-                overdraftFeeMultiplier = companyOverdraftDiscount; // Для компанії без преміум акаунта знижка без змін
+                return companyOverdraftDiscount; // Для компанії без преміум акаунта знижка без змін
             }
-            // Для особи на звичайному акаунті множник теж 1.0
+            return 1.0; // Для особи на звичайному акаунті множник теж 1.0
         }
+    }
 
-        // Якщо акаунт у овердрафті, застосовуємо відповідний множник
+    private void processWithdrawal(double sum, double overdraftFeeMultiplier) {
         if (account.getMoney() < 0) {
+            // Якщо акаунт у овердрафті, застосовуємо відповідний множник
             account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee() * overdraftFeeMultiplier);
         } else {
+            // Якщо баланс не від'ємний
             account.setMoney(account.getMoney() - sum);
         }
     }
