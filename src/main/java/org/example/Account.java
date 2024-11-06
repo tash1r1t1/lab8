@@ -99,4 +99,10 @@ public class Account {
 
         accountService.withdraw(sum, customerType);
     }
+
+    public String printCustomerDaysOverdrawn() {
+        String fullName = customer.getName() + " " + customer.getSurname() + " ";
+        String accountDescription = "Account: IBAN: " +getIban() + ", Days Overdrawn: " + getDaysOverdrawn();
+        return fullName + accountDescription;
+    }
 }

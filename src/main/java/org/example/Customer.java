@@ -32,6 +32,9 @@ public class Customer {
     public String getName() {
         return name;
     }
+    public String getSurname() {
+        return surname;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -53,11 +56,6 @@ public class Customer {
         this.customerType = customerType;
     }
 
-    public String printCustomerDaysOverdrawn() {
-        String fullName = name + " " + surname + " ";
-        String accountDescription = "Account: IBAN: " + account.getIban() + ", Days Overdrawn: " + account.getDaysOverdrawn();
-        return fullName + accountDescription;
-    }
 
     public String printCustomerMoney() {
         String fullName = name + " " + surname + " ";
