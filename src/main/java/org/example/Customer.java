@@ -27,13 +27,6 @@ public class Customer {
         this.accountService = new AccountService(account, companyOverdraftDiscount);
     }
 
-    public void withdraw(double sum, String currency) {
-        if (!account.getCurrency().equals(currency)) {
-            throw new RuntimeException("Can't extract withdraw " + currency);
-        }
-
-        accountService.withdraw(sum, customerType);
-    }
 
     // Getter and Setter methods
     public String getName() {
@@ -71,10 +64,5 @@ public class Customer {
         String accountDescription = "";
         accountDescription += "Account: IBAN: " + account.getIban() + ", Money: " + account.getMoney();
         return fullName + accountDescription;
-    }
-
-    public String printCustomerAccount() {
-        return "Account: IBAN: " + account.getIban() + ", Money: "
-                + account.getMoney() + ", Account type: " + account.getType();
     }
 }

@@ -7,7 +7,9 @@ public class Account {
     private double money;
     private String currency;
     private Customer customer;
+    private AccountService accountService;
 
+    private CustomerType customerType;
     public Account(AccountType type, int daysOverdrawn) {
         super();
         this.type = type;
@@ -84,5 +86,17 @@ public class Account {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String printCustomerAccount() {
+        return "Account: IBAN: " + getIban() + ", Money: "
+                + getMoney() + ", Account type: " + getType();
+    }
+    public void withdraw(double sum, String currency) {
+        if (!getCurrency().equals(currency)) {
+            throw new RuntimeException("Can't extract withdraw " + currency);
+        }
+
+        accountService.withdraw(sum, customerType);
     }
 }
