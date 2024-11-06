@@ -1,4 +1,5 @@
 package org.example;
+
 public class Customer {
 
     private String name;
@@ -6,8 +7,7 @@ public class Customer {
     private String email;
     private CustomerType customerType;
     private Account account;
-    private double companyOverdraftDiscount = 1;
-
+    private AccountService accountService;
 
     public Customer(String name, String surname, String email, CustomerType customerType, Account account) {
         this.name = name;
@@ -15,6 +15,7 @@ public class Customer {
         this.email = email;
         this.customerType = customerType;
         this.account = account;
+        this.accountService = new AccountService(account, 1); // Default discount is 1
     }
 
     // use only to create companies
@@ -23,7 +24,7 @@ public class Customer {
         this.email = email;
         this.customerType = CustomerType.COMPANY;
         this.account = account;
-        this.companyOverdraftDiscount = companyOverdraftDiscount;
+        this.accountService = new AccountService(account, companyOverdraftDiscount);
     }
 
     public void withdraw(double sum, String currency) {
@@ -31,35 +32,10 @@ public class Customer {
             throw new RuntimeException("Can't extract withdraw " + currency);
         }
 
-        double overdraftFeeMultiplier = getOverdraftFeeMultiplier();
-        processWithdrawal(sum, overdraftFeeMultiplier);
+        accountService.withdraw(sum, customerType);
     }
 
-    private double getOverdraftFeeMultiplier() {
-        if (account.getType().isPremium()) {
-            if (customerType == CustomerType.COMPANY) {
-                return companyOverdraftDiscount / 2; // Для компанії на преміум акаунті - знижка 50%
-            }
-            return 1.0; // Для особи на преміум акаунті множник залишається 1.0
-        } else {
-            if (customerType == CustomerType.COMPANY) {
-                return companyOverdraftDiscount; // Для компанії без преміум акаунта знижка без змін
-            }
-            return 1.0; // Для особи на звичайному акаунті множник теж 1.0
-        }
-    }
-
-    private void processWithdrawal(double sum, double overdraftFeeMultiplier) {
-        if (account.getMoney() < 0) {
-            // Якщо акаунт у овердрафті, застосовуємо відповідний множник
-            account.setMoney((account.getMoney() - sum) - sum * account.overdraftFee() * overdraftFeeMultiplier);
-        } else {
-            // Якщо баланс не від'ємний
-            account.setMoney(account.getMoney() - sum);
-        }
-    }
-
-
+    // Getter and Setter methods
     public String getName() {
         return name;
     }
