@@ -1,5 +1,7 @@
-package org.example;
-
+import org.example.Account;
+import org.example.AccountType;
+import org.example.Customer;
+import org.example.CustomerType;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
